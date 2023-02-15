@@ -20,7 +20,7 @@ def record_highest(num_added, in_list):
     for i in range(len(in_list)):
         if num_added > in_list[i]:
             if i == 0:
-                in_list[i] == num_added
+                in_list[i] = num_added
             else:
                 in_list[i-1] = in_list[i]
                 in_list[i] = num_added
@@ -33,14 +33,14 @@ def eval(all_confusion):
     return acc, f1, precision, recall
     
 
-
+path0 = Path('/home/users/wusw/xiaojb/social-bot-data/datasets/Twibot-20')
 path1 = Path('src/data')
 path2 = Path('src/state_dict')
 
 split = [[], [], []]
-split_list = pd.read_csv(path1 / 'split.csv')
-label = pd.read_csv(path1 / 'label.csv')
-
+split_list = pd.read_csv(path0 / 'split.csv')
+label = pd.read_csv(path0 / 'label.csv')
+print('read split.csv & label.csv')
 
 users_index_to_uid = list(label['id'])
 uid_to_users_index = {x : i for i, x in enumerate(users_index_to_uid)}
@@ -66,11 +66,16 @@ class InterDataset(Dataset):
     def __init__(self, name='train'):
         super(InterDataset, self).__init__()
         self.text = torch.load(path1 / 'text.pt') #11826
+        print('load text.pt')
         self.user_neighbor_index = np.load(path1 / 'user_neighbor_index.npy', allow_pickle=True).tolist() # 11826
-        self.user_label = torch.load(path1 / 'node_label.pt')
+        print('load user_neighbor_index.npy')
+        self.user_label = np.load(path1 / 'node_label.npy', allow_pickle=True).tolist()
+        print('load node_label.npy')
         self.num_feature = torch.load(path1 / 'num_properties_tensor.pt') #229580
         self.cat_feature = torch.load(path1 / 'cat_properties_tensor.pt') #229580
+        print('load *_properties_tensor.pt')
         self.tweet_feature = torch.load(path1 / 'tweets_tensor.pt')
+        print('load tweets_tensor.pt')
         self.des_feature = torch.load(path1 / 'des_tensor.pt')
         self.edge_index = torch.load(path1 / 'edge_index.pt') #check if tensor
         
