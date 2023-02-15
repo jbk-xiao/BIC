@@ -82,17 +82,17 @@ class InterDataset(Dataset):
         if name == 'train':
             self.text = self.text[split[0]]
             self.user_neighbor_index = [self.user_neighbor_index[split[0][i]] for i in range(len(split[0]))]
-            self.user_label = self.user_label[split[0]]
+            self.user_label = [self.user_label[split[0][i]] for i in range(len(split[0]))]
             self.length = len(self.user_label)
         if name == 'val':
             self.text = self.text[split[1]]
             self.user_neighbor_index = [self.user_neighbor_index[split[1][i]] for i in range(len(split[1]))]
-            self.user_label = self.user_label[split[1]]
+            self.user_label = [self.user_label[split[1][i]] for i in range(len(split[0]))]
             self.length = len(self.user_label)
         if name == 'test':
             self.text = self.text[split[2]]
             self.user_neighbor_index = [self.user_neighbor_index[split[2][i]] for i in range(len(split[2]))]
-            self.user_label = self.user_label[split[2]]
+            self.user_label = [self.user_label[split[2][i]] for i in range(len(split[0]))]
             self.length = len(self.user_label)
         
         # self.text = torch.randn(16, 200, 768) #11826
