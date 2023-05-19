@@ -107,7 +107,7 @@ class InterDataset(Dataset):
         return self.length
     
     def __getitem__(self, index):
-        return self.text[index], self.user_neighbor_index[index], self.user_label[index], self.num_feature, self.cat_feature, self.tweet_feature, self.des_feature, self.edge_index
+        return self.text[index], self.user_neighbor_index[index], torch.tensor(self.user_label[index]), self.num_feature, self.cat_feature, self.tweet_feature, self.des_feature, self.edge_index
 
 class InterTrainer:
     def __init__(self, train_loader, val_loader, test_loader, model=InteractModel, optimizer=torch.optim.Adam,
