@@ -28,7 +28,7 @@ class InteractModel(nn.Module):
         self.des_linear = nn.Linear(des_dim, hidden_dim // 4)
 
         self.graph_linear = nn.Linear(hidden_dim, hidden_dim)
-        self.text_linear = nn.Linear(input_dim * 2, hidden_dim)
+        self.text_linear = nn.Linear(input_dim, hidden_dim)
         
         self.Model_0 = RespectiveLayer(in_channels_for_graph=hidden_dim, in_channels_for_text=hidden_dim, out_channels=hidden_dim, attention_dim=attention_dim, graph_num_heads=graph_num_heads, dropout=dropout, device=self.device)
         self.Model_1 = RespectiveLayer(in_channels_for_graph=hidden_dim, in_channels_for_text=hidden_dim, out_channels=hidden_dim, attention_dim=attention_dim, graph_num_heads=graph_num_heads, dropout=dropout, device=self.device)
@@ -70,27 +70,27 @@ class InteractModel(nn.Module):
         title = text[:, 0]
         title = self.dropout(self.relu(self.title_linear(title)))
 
-
+        
         user_index = []
         for neighbor_index in user_neighbor_index:
             user_index.append(neighbor_index[0])
         user_feature = all_user_feature[user_index]
         user_feature = self.dropout(self.relu(self.user_feature_linear(user_feature)))
-
+        
         attention_vec_0 = attention_graph_0.view(attention_graph_0.shape[0], self.attention_dim * self.attention_dim)
         attention_vec_1 = attention_graph_1.view(attention_graph_1.shape[0], self.attention_dim * self.attention_dim)
         # attention_vec_2 = attention_graph_2.view(attention_graph_2.shape[0], self.attention_dim * self.attention_dim)
-
+        
         attention_vec = torch.cat((attention_vec_0, attention_vec_1), dim=-1)
         attention_vec = self.dropout(self.relu(self.attention_linear(attention_vec)))
-
+        
         final_input = torch.cat((attention_vec, title, user_feature), dim=-1)
         final_output = self.dropout(self.relu(self.final_linear(final_input)))
-
+        
         return final_output
-
-
-
+    
+    
+    
 class RespectiveLayer(nn.Module):
     """
     assume LM & GM has same layer
@@ -148,7 +148,7 @@ class InteractLayer(nn.Module):
             user_index.append(neighbor_index[0])
         
         graph_ini = all_user_feature[user_index]
-        text_ini, text_rest = text.split([1, 127], dim=1)
+        text_ini, text_rest = text.split([1,200], dim=1)
         text_ini = text_ini.squeeze(1)
         
         text_tmp = self.linear_text(text_ini)
